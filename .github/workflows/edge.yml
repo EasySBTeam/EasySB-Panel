@@ -1,0 +1,61 @@
+name: Build EasySB panel edge
+
+# 跟随 main 的滚动构建：发布一个名为 edge 的预发布，EasySB 侧
+# `make panel-edge` 取它，用于联调还没进正式 Release 的前端改动。
+# A rolling build that follows main: it refreshes the `edge` pre-release, which the
+# EasySB side fetches with `make panel-edge` to test front-end changes before a release.
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: panel-edge-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  TZ: Asia/Shanghai
+
+jobs:
+  edge:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - name: 检出仓库
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: 安装 Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: 安装依赖
+        run: npm ci
+
+      - name: 构建前端
+        run: PANEL_OUTDIR=dist npm run build
+
+      - name: 打包产物
+        run: |
+          set -euo pipefail
+          tar -czf easysb-panel-dist-edge.tar.gz -C dist .
+          ls -lh easysb-panel-dist-edge.tar.gz
+
+      - name: 刷新 edge 预发布
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          asset=easysb-panel-dist-edge.tar.gz
+          if gh release view edge >/dev/null 2>&1; then
+            gh release upload edge "$asset" --clobber
+          else
+            gh release create edge "$asset" --title edge --prerelease \
+              --notes "跟随 main 的滚动前端构建 / rolling front-end build from main"
+          fi

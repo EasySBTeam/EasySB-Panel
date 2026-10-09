@@ -1,0 +1,84 @@
+name: Build EasySB panel release
+
+# 前端源码只在本仓库：这里把站点构建成静态产物，作为 Release 资产发布。EasySB 主仓库
+# 构建时用 scripts/fetch-panel.sh 把它下载进 internal/panel/web 供 go:embed，主仓库由此
+# 不需要 Node 工具链，也不提交任何编译产物。
+# The front end lives only here: this workflow builds the SPA and publishes it as a
+# release asset. The EasySB repository downloads it into internal/panel/web for go:embed,
+# so the Go repository needs no Node toolchain and never commits the built SPA.
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 版本号（如 0.1.0）；留空则用 package.json 的 version
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: panel-release-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  TZ: Asia/Shanghai
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - name: 检出仓库
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+
+      - name: 解析版本
+        id: ver
+        run: |
+          set -euo pipefail
+          if [ -n "${{ github.event.inputs.version }}" ]; then
+            version="${{ github.event.inputs.version }}"
+          elif [ "${{ github.ref_type }}" = "tag" ]; then
+            version="${GITHUB_REF_NAME#v}"
+          else
+            version="$(jq -r .version package.json)"
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "tag=v$version" >> "$GITHUB_OUTPUT"
+
+      - name: 安装 Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: 安装依赖
+        run: npm ci
+
+      - name: 构建前端
+        run: PANEL_OUTDIR=dist npm run build
+
+      - name: 打包产物
+        run: |
+          set -euo pipefail
+          tar -czf "easysb-panel-dist-v${{ steps.ver.outputs.version }}.tar.gz" -C dist .
+          ls -lh easysb-panel-dist-*.tar.gz
+
+      - name: 发布 Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag="${{ steps.ver.outputs.tag }}"
+          asset="easysb-panel-dist-v${{ steps.ver.outputs.version }}.tar.gz"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" "$asset" --clobber
+          else
+            gh release create "$tag" "$asset" --title "$tag" --generate-notes
+          fi
