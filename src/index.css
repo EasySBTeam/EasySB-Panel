@@ -1,0 +1,1265 @@
+/* EasySB panel theme. Arco owns component styling and ships its own light/dark
+   palettes; this file adds the 1Panel-style shell: a light blue-gray sidebar of
+   separate rounded menu cards, a page-title pill in the header, white content
+   cards with a blue title bar, and a compact split login card. */
+
+:root {
+  font-size: 14px;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  /* Match 1Panel's brand blue for the primary ramp. Arco's dark rule on
+     body[arco-theme='dark'] is more specific, so dark keeps its own blue. */
+  --arcoblue-6: 51, 112, 255;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  background: var(--app-bg);
+  color: var(--app-text-1);
+}
+
+body[data-theme='light'] {
+  --app-bg: #f0f2f5;
+  --app-surface: #ffffff;
+  --app-border: #e5e6eb;
+  --app-text-1: #1d2129;
+  --app-text-2: #4e5969;
+  --app-text-3: #86909c;
+  --app-primary-soft: #e8f0ff;
+  --app-soft: #f2f5fa;
+  --app-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 6px 20px rgba(15, 23, 42, 0.05);
+  --app-sider-bg: #f5f7fa;
+  --app-sider-card: #ffffff;
+  --app-sider-hover: #ffffff;
+  --app-sider-selected: #e8f0ff;
+  --app-warn-bg: #fff8e6;
+  --app-warn-text: #a9700a;
+  --app-warn-border: #ffe3a3;
+}
+
+body[data-theme='dark'] {
+  --app-bg: #17171a;
+  --app-surface: #232324;
+  --app-border: #34343a;
+  --app-text-1: #f2f3f5;
+  --app-text-2: #c9cdd4;
+  --app-text-3: #86909c;
+  --app-primary-soft: rgba(60, 126, 255, 0.18);
+  --app-soft: rgba(255, 255, 255, 0.04);
+  --app-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 6px 20px rgba(0, 0, 0, 0.35);
+  --app-sider-bg: #1b1b1f;
+  --app-sider-card: #232327;
+  --app-sider-hover: #2b2b31;
+  --app-sider-selected: rgba(60, 126, 255, 0.18);
+  --app-warn-bg: rgba(255, 196, 0, 0.12);
+  --app-warn-text: #ffcf5c;
+  --app-warn-border: rgba(255, 196, 0, 0.24);
+}
+
+/* --- Shell ------------------------------------------------------------- */
+
+.app-shell {
+  height: 100vh;
+  overflow: hidden;
+}
+
+.app-sider {
+  position: relative;
+  height: 100vh;
+  background: var(--app-sider-bg) !important;
+  border-right: 1px solid var(--app-border);
+}
+
+.app-sider .arco-layout-sider-children {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: visible;
+}
+
+.app-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 56px;
+  padding: 0 16px;
+  flex: 0 0 auto;
+}
+
+.app-logo-mark {
+  display: block;
+  flex: 0 0 auto;
+}
+
+.app-logo-text {
+  font-size: 15px;
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--app-text-1);
+}
+
+.app-collapse-btn {
+  margin-left: auto;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  color: var(--app-text-3) !important;
+}
+
+.app-menu {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 4px 0;
+  background: transparent !important;
+}
+
+.app-menu .arco-menu-inner {
+  padding: 4px 10px 8px;
+}
+
+.app-menu .arco-menu-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 44px;
+  line-height: 44px;
+  margin: 0 0 6px;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: var(--app-sider-card);
+  color: var(--app-text-2);
+  font-size: 14px;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.app-menu .arco-menu-item:last-child {
+  margin-bottom: 0;
+}
+
+.app-menu .arco-menu-item:hover {
+  background: var(--app-sider-hover);
+  color: var(--app-text-1);
+}
+
+.app-menu .arco-menu-item.arco-menu-selected {
+  background: var(--app-sider-selected) !important;
+  border-color: rgba(51, 112, 255, 0.28);
+  color: rgb(var(--primary-6)) !important;
+  font-weight: 600;
+}
+
+.app-menu .arco-menu-item.arco-menu-selected::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 9px;
+  bottom: 9px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: rgb(var(--primary-6));
+}
+
+.app-menu .arco-menu-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+/* Arco sizes menu icons by the wrapping element's font-size and adds its own
+   16px margin; the shell spaces items with gap instead, and asks for larger
+   icons than Arco's default. */
+.app-sider .app-menu .arco-menu-item .arco-icon {
+  font-size: 20px;
+  margin-right: 0;
+}
+
+/* Arco pushes a collapsed item's icon with margin-right:100vw, which throws it
+   off centre; the shell centres the icon itself. */
+.app-sider .app-menu.arco-menu-collapse .arco-menu-item .arco-icon {
+  font-size: 21px;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.app-sider-collapsed .app-menu .arco-menu-inner {
+  padding: 4px 8px;
+}
+
+.app-sider-collapsed .app-menu .arco-menu-item {
+  justify-content: center;
+  padding: 0;
+  gap: 0;
+}
+
+.app-sider-collapsed .app-menu-label {
+  display: none;
+}
+
+.app-sider-collapsed .app-menu .arco-menu-icon {
+  font-size: 21px;
+}
+
+/* The expand control sits on the rail's right edge, where a collapsed 1Panel
+   keeps it, so the shell can always be reopened without hunting for a target. */
+.app-expand-fab {
+  position: absolute;
+  top: 15px;
+  right: -13px;
+  z-index: 20;
+  width: 26px !important;
+  height: 26px !important;
+  border: 1px solid var(--app-border) !important;
+  background: var(--app-surface) !important;
+  color: var(--app-text-2) !important;
+  box-shadow: var(--app-shadow);
+}
+
+.app-sider-collapsed .app-logo {
+  padding: 0 0 0 15px;
+}
+
+.app-sider-footer {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 10px 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--app-sider-card);
+  border: 1px solid var(--app-border);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--app-text-1);
+}
+
+.app-sider-footer .arco-icon {
+  font-size: 16px;
+  color: var(--app-text-3);
+}
+
+.app-body {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--app-bg);
+}
+
+.app-header {
+  flex: 0 0 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 16px;
+  background: var(--app-surface);
+  border-bottom: 1px solid var(--app-border);
+}
+
+.app-header-left,
+.app-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.app-page-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(51, 112, 255, 0.28);
+  background: var(--app-primary-soft);
+  color: rgb(var(--primary-6));
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.app-icon-btn {
+  font-size: 16px;
+  color: var(--app-text-2) !important;
+}
+
+.app-lang-btn {
+  font-size: 13px;
+}
+
+.app-user {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 8px 2px 2px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.app-user:hover {
+  background: var(--app-soft);
+}
+
+.app-user .arco-typography {
+  color: var(--app-text-1);
+}
+
+.app-banner {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 16px;
+  background: var(--app-warn-bg);
+  color: var(--app-warn-text);
+  border-bottom: 1px solid var(--app-warn-border);
+  font-size: 13px;
+}
+
+.app-banner .app-banner-icon {
+  font-size: 15px;
+  flex: 0 0 auto;
+}
+
+.app-banner-text {
+  flex: 1 1 auto;
+}
+
+.app-banner-action {
+  color: rgb(var(--primary-6)) !important;
+  font-weight: 600;
+  padding: 0 !important;
+  height: auto !important;
+}
+
+.app-banner-close {
+  color: inherit !important;
+  opacity: 0.7;
+}
+
+.app-content {
+  flex: 1 1 auto;
+  overflow: auto;
+  padding: 16px;
+}
+
+/* --- Shared page pieces ------------------------------------------------ */
+
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.page-header h2 {
+  margin: 0 0 4px;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--app-text-1);
+}
+
+.muted {
+  color: var(--app-text-3);
+  font-size: 12px;
+}
+
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  word-break: break-all;
+}
+
+.center-block {
+  display: grid;
+  place-items: center;
+  min-height: 320px;
+}
+
+.center-screen {
+  display: grid;
+  place-items: center;
+  height: 100vh;
+}
+
+.log-view {
+  margin: 0;
+  max-height: 460px;
+  overflow: auto;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: var(--app-soft);
+  color: var(--app-text-2);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.panel-card {
+  background: var(--app-surface) !important;
+  border: 1px solid var(--app-border) !important;
+  border-radius: 10px !important;
+  box-shadow: var(--app-shadow);
+}
+
+.panel-card .arco-card-header {
+  border-bottom: 1px solid var(--app-border);
+  height: auto;
+  padding: 13px 16px;
+}
+
+.panel-card .arco-card-header-title {
+  position: relative;
+  padding-left: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--app-text-1);
+}
+
+.panel-card .arco-card-header-title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 14px;
+  border-radius: 2px;
+  background: rgb(var(--primary-6));
+}
+
+.panel-card .arco-card-body {
+  padding: 16px;
+}
+
+.table-card {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* --- Dashboard --------------------------------------------------------- */
+
+.dash-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.dash-main,
+.dash-side {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+@media (max-width: 1180px) {
+  .dash-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.ov-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.ov-cell {
+  min-width: 0;
+  padding: 4px 2px;
+}
+
+.ov-label {
+  font-size: 13px;
+  color: var(--app-text-3);
+}
+
+.ov-value {
+  margin-top: 8px;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: rgb(var(--primary-6));
+  font-variant-numeric: tabular-nums;
+}
+
+.status-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.metric-ring {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  min-width: 0;
+}
+
+.metric-ring-label {
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--app-text-1);
+}
+
+.metric-ring-detail {
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--app-text-3);
+  word-break: break-all;
+}
+
+.monitor-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+/* The traffic and disk-IO readings share this card and swap with a segmented
+   toggle, so the toggle sits on its own line above the numbers. */
+.monitor-head {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 14px;
+}
+
+.monitor-stat {
+  padding: 9px 12px;
+  border-radius: 8px;
+  background: var(--app-soft);
+}
+
+.monitor-stat-label {
+  font-size: 12px;
+  color: var(--app-text-3);
+}
+
+.monitor-stat-value {
+  margin-top: 3px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--app-text-1);
+  font-variant-numeric: tabular-nums;
+}
+
+.monitor-chart {
+  position: relative;
+  height: 132px;
+}
+
+.monitor-chart svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.monitor-empty {
+  display: grid;
+  place-items: center;
+  height: 132px;
+  color: var(--app-text-3);
+  font-size: 13px;
+}
+
+.monitor-legend {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--app-text-3);
+}
+
+.monitor-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.dot-up {
+  background: #3ecf8e;
+}
+
+.dot-down {
+  background: #f5a623;
+}
+
+/* --- Info lists ------------------------------------------------------- */
+
+.info-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.info-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 0;
+  border-bottom: 1px dashed var(--app-border);
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  flex: 0 0 auto;
+  font-size: 13px;
+  color: var(--app-text-3);
+}
+
+.info-value {
+  min-width: 0;
+  font-size: 13px;
+  color: var(--app-text-1);
+  text-align: right;
+  word-break: break-all;
+}
+
+/* --- List rows (domains) ---------------------------------------------- */
+
+.list-rows {
+  display: flex;
+  flex-direction: column;
+}
+
+.list-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 2px;
+  border-bottom: 1px solid var(--app-border);
+}
+
+.list-row:last-child {
+  border-bottom: none;
+}
+
+/* --- Login ------------------------------------------------------------- */
+
+.login-page {
+  /* border-box keeps the vertical padding inside the 100vh floor, so the page is
+     exactly one viewport tall and never gains a scrollbar when the card fits. */
+  box-sizing: border-box;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 28px 20px;
+  background:
+    radial-gradient(1100px 560px at 12% 6%, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0) 58%),
+    linear-gradient(135deg, #eaf2fd 0%, #eef4fc 46%, #e4edfb 100%);
+}
+
+body[data-theme='dark'] .login-page {
+  background:
+    radial-gradient(1100px 560px at 12% 6%, rgba(60, 126, 255, 0.18) 0%, rgba(60, 126, 255, 0) 58%),
+    linear-gradient(135deg, #0f1420 0%, #121926 46%, #0d111a 100%);
+}
+
+.login-card {
+  display: flex;
+  width: min(920px, 100%);
+  min-height: 452px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--app-surface);
+  box-shadow:
+    0 20px 50px rgba(15, 23, 42, 0.12),
+    0 4px 14px rgba(15, 23, 42, 0.06);
+}
+
+.login-brand {
+  position: relative;
+  flex: 1 1 54%;
+  display: flex;
+  flex-direction: column;
+  padding: 32px 38px;
+  color: #ffffff;
+  overflow: hidden;
+  background: linear-gradient(150deg, #3b82f6 0%, #2563eb 55%, #1d4ed8 100%);
+}
+
+.login-brand-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  z-index: 2;
+}
+
+.login-brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.16);
+  font-size: 18px;
+}
+
+.login-brand-body {
+  margin: auto 0;
+  z-index: 2;
+}
+
+.login-brand-body h1 {
+  margin: 0 0 12px;
+  font-size: 23px;
+  line-height: 1.35;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.login-brand-body p {
+  margin: 0 0 20px;
+  max-width: 330px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.login-brand-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.login-brand-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.login-brand-list .arco-icon {
+  font-size: 15px;
+  opacity: 0.9;
+}
+
+.login-brand-art {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.login-brand-art span {
+  position: absolute;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.16);
+}
+
+.login-brand-art .ring-a {
+  width: 240px;
+  height: 240px;
+  right: -90px;
+  top: -70px;
+}
+
+.login-brand-art .ring-b {
+  width: 170px;
+  height: 170px;
+  left: -70px;
+  bottom: -60px;
+}
+
+.login-brand-art .blob {
+  position: absolute;
+  border: none;
+  border-radius: 26px;
+  background: rgba(255, 255, 255, 0.08);
+  transform: rotate(24deg);
+}
+
+.login-brand-art .blob-a {
+  width: 140px;
+  height: 140px;
+  right: -40px;
+  bottom: 54px;
+}
+
+.login-brand-art .blob-b {
+  width: 84px;
+  height: 84px;
+  right: 64px;
+  bottom: -30px;
+  border-radius: 20px;
+}
+
+.login-brand-art .grid-dots {
+  width: 116px;
+  height: 86px;
+  border: none;
+  border-radius: 0;
+  left: 36px;
+  top: 104px;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.35) 1.5px, transparent 1.5px);
+  background-size: 14px 14px;
+}
+
+.login-form {
+  flex: 1 1 46%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 36px 44px;
+}
+
+.login-form-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.login-form-head h3 {
+  margin: 0;
+  font-size: 21px;
+  font-weight: 700;
+  color: var(--app-text-1);
+}
+
+.login-form-sub {
+  margin: 6px 0 18px;
+  font-size: 13px;
+  color: var(--app-text-3);
+}
+
+.login-submit {
+  height: 42px !important;
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+.login-license {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  font-size: 12.5px;
+  color: var(--app-text-3);
+  flex-wrap: wrap;
+}
+
+.login-license .arco-checkbox {
+  padding-left: 0;
+}
+
+.login-license a {
+  color: rgb(var(--primary-6));
+}
+
+.license-body {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--app-text-2);
+}
+
+.license-body a {
+  color: rgb(var(--primary-6));
+}
+
+@media (max-width: 860px) {
+  .login-page {
+    padding: 18px 14px;
+  }
+
+  .login-card {
+    min-height: auto;
+  }
+
+  .login-brand {
+    display: none;
+  }
+
+  .login-form {
+    flex: 1 1 100%;
+    padding: 30px 24px;
+  }
+
+  .app-content {
+    padding: 12px;
+  }
+
+  .ov-grid,
+  .status-grid,
+  .monitor-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* --- Footer bar --------------------------------------------------------- */
+
+.app-footer {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  height: 40px;
+  padding: 0 16px;
+  background: var(--app-surface);
+  border-top: 1px solid var(--app-border);
+  font-size: 12.5px;
+  color: var(--app-text-3);
+}
+
+.app-footer-links {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.app-footer-links a {
+  color: var(--app-text-2);
+  text-decoration: none;
+}
+
+.app-footer-links a:hover {
+  color: rgb(var(--primary-6));
+}
+
+.app-footer-pro {
+  color: var(--app-text-2);
+}
+
+/* --- Terminal ----------------------------------------------------------- */
+
+.terminal-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.terminal-box {
+  height: calc(100vh - 220px);
+  min-height: 320px;
+  padding: 8px 4px 8px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--app-border);
+  background: #1b1b1f;
+  box-shadow: var(--app-shadow);
+  overflow: hidden;
+}
+
+.terminal-box .xterm {
+  height: 100%;
+}
+
+.terminal-hint {
+  margin-top: 10px;
+}
+
+/* --- Toolbox ------------------------------------------------------------ */
+
+.toolbox-groups {
+  margin-bottom: 16px;
+}
+
+.toolbox-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.toolbox-card .arco-card-body {
+  padding: 14px 16px;
+}
+
+.toolbox-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.toolbox-card-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--app-text-1);
+  margin-bottom: 2px;
+}
+
+.toolbox-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.toolbox-card-board {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.toolbox-report {
+  margin-top: 4px;
+}
+
+.toolbox-summary {
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--app-primary-soft);
+  color: rgb(var(--primary-6));
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.toolbox-notes {
+  margin-top: 14px;
+}
+
+.toolbox-notes-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--app-text-1);
+  margin-bottom: 6px;
+}
+
+.toolbox-notes ul {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--app-text-2);
+  font-size: 12.5px;
+  line-height: 1.7;
+}
+
+@media (max-width: 860px) {
+  .toolbox-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .terminal-box {
+    height: calc(100vh - 260px);
+  }
+}
+
+/* --- Dashboard tabs ----------------------------------------------------- */
+
+.dashboard-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.section-title {
+  margin: 0 0 4px;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--app-text-1);
+}
+
+.dot-read {
+  background: #4080ff;
+}
+
+.dot-write {
+  background: #9b6bff;
+}
+
+/* --- Primary-node control ----------------------------------------------- */
+
+.app-node {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--app-border);
+  border-radius: 9px;
+  background: var(--app-surface);
+  color: var(--app-text-1);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.app-node:hover,
+.app-node:focus-visible {
+  border-color: rgba(51, 112, 255, 0.4);
+  background: var(--app-primary-soft);
+  outline: none;
+}
+
+.app-node-icon {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  background: var(--app-primary-soft);
+  color: rgb(var(--primary-6));
+  font-size: 15px;
+}
+
+.app-node-caret {
+  font-size: 12px;
+  color: var(--app-text-3);
+}
+
+/* The 主节点 control is the foot of the sidebar, so it is pinned below the
+   scrolling menu rather than floating in the top bar. */
+.app-sider .app-node {
+  flex: 0 0 auto;
+  margin: 8px 10px 12px;
+}
+
+.app-sider .app-node-collapsed {
+  justify-content: center;
+  padding: 0;
+}
+
+.node-menu {
+  width: 264px;
+  padding: 14px;
+  border-radius: 10px;
+  background: var(--app-surface);
+  box-shadow: var(--app-shadow);
+}
+
+.node-menu-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--app-border);
+}
+
+.node-menu-id {
+  min-width: 0;
+}
+
+.node-menu-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--app-text-1);
+}
+
+.node-menu-sub {
+  font-size: 12px;
+  color: var(--app-text-3);
+}
+
+.node-menu .arco-btn {
+  margin-top: 14px;
+}
+
+/* --- Settings rows (1Panel style) ------------------------------------- */
+
+.setting-rows {
+  display: flex;
+  flex-direction: column;
+}
+
+.setting-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--app-border);
+}
+
+.setting-row:last-child {
+  border-bottom: none;
+}
+
+.setting-label {
+  flex: 0 0 160px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 6px;
+  font-size: 13px;
+  color: var(--app-text-2);
+}
+
+.setting-hint {
+  font-size: 12px;
+  color: var(--app-text-3);
+  line-height: 1.5;
+}
+
+.setting-control {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.setting-divider {
+  margin: 20px 0 16px;
+  border-top: 1px solid var(--app-border);
+}
+
+.setting-title {
+  margin: 0 0 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--app-text-1);
+}
+
+.setting-footnote {
+  margin-top: 12px;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+@media (max-width: 720px) {
+  .setting-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .setting-label {
+    flex-basis: auto;
+    padding-top: 0;
+  }
+}
+
+/* --- BBR ---------------------------------------------------------------- */
+
+.bbr-qdisc {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
