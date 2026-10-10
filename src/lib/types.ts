@@ -264,6 +264,28 @@ export interface RuntimeResponse {
   }
 }
 
+/**
+ * The rolling system sample the overview charts read. Every series has the same
+ * length as `times`; percentages are 0-100, net rates are bytes per second and
+ * the connection counts are whole numbers.
+ */
+export interface HistoryResponse {
+  intervalSecs: number
+  capacity: number
+  count: number
+  times: number[]
+  series: {
+    cpu: number[]
+    mem: number[]
+    swap: number[]
+    disk: number[]
+    netUp: number[]
+    netDown: number[]
+    tcp: number[]
+    udp: number[]
+  }
+}
+
 export interface LogsResponse {
   service: string
   path: string

@@ -24,6 +24,7 @@ import type {
   DomainIssueResponse,
   DomainsResponse,
   FirewallActionResponse,
+  HistoryResponse,
   LoginResponse,
   LogsResponse,
   NetworkResponse,
@@ -65,6 +66,7 @@ export const keys = {
   system: ['system'] as const,
   network: ['system', 'network'] as const,
   runtime: ['system', 'runtime'] as const,
+  history: ['system', 'history'] as const,
   logs: (service: string, lines: number) => ['logs', service, lines] as const,
   panel: ['panel'] as const,
   security: ['security'] as const,
@@ -188,6 +190,14 @@ export function useRuntime(pollMs = 0) {
   return useQuery({
     queryKey: keys.runtime,
     queryFn: () => http.get<RuntimeResponse>('/system/runtime'),
+    refetchInterval: pollMs || false,
+  })
+}
+
+export function useHistory(pollMs = 0) {
+  return useQuery({
+    queryKey: keys.history,
+    queryFn: () => http.get<HistoryResponse>('/system/history'),
     refetchInterval: pollMs || false,
   })
 }
