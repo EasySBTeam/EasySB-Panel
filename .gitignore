@@ -1,16 +1,34 @@
 # Dependencies
 node_modules/
 
-# Build output (Vite writes into the EasySB tree, but ignore a local dist too)
+# Build output. A local build writes into the EasySB tree's public/dist by
+# default (see vite.config.ts); PANEL_OUTDIR=dist is used in CI, where this
+# directory becomes the released asset, so it is ignored too.
 dist/
+dist-ssr/
+*.local
 
-# Logs and editor files
+# Logs
+logs
 *.log
-.DS_Store
-.idea/
-.vscode/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
 # Local environment
 .env
 .env.*
 !.env.example
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
