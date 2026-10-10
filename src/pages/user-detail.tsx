@@ -177,7 +177,7 @@ export function UserDetailPage() {
               { label: '到期时间', value: data.expireAt ? formatDateTime(data.expireAt) : '永久' },
               { label: '上次重置', value: data.lastReset ? formatDateTime(data.lastReset) : '—' },
               { label: '凭据状态', value: data.credentialsReady ? '就绪' : '未就绪' },
-              { label: '可用节点', value: `${data.nodes.length} 个` },
+              { label: '可用节点', value: `${data.nodes?.length ?? 0} 个` },
             ]}
           />
         </Section>

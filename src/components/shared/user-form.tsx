@@ -57,7 +57,7 @@ export function UserFormDialog({
       setQuotaGb(user.unlimited ? 0 : bytesToGb(user.quotaBytes))
       setExpireAt(user.expireAt ? formatDate(user.expireAt) : '')
       setEnabled(user.enabled)
-      setSelected(user.nodes)
+      setSelected(user.nodes ?? [])
     } else {
       setName('')
       setRemark('')

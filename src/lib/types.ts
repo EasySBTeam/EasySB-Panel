@@ -39,7 +39,8 @@ export interface ProtocolInfo {
   key: ProtocolKey
   label: string
   defaultPort: number
-  params: ParamInfo[]
+  /** Null when the protocol exposes no parameter: the API sends `null` for an empty set. */
+  params: ParamInfo[] | null
 }
 
 export interface NodesResponse {
@@ -69,7 +70,8 @@ export interface User {
   token: string
   enabled: boolean
   status: UserStatus
-  nodes: string[]
+  /** Null when the account selects no node: the API sends `null` for an empty set. */
+  nodes: string[] | null
   quotaBytes: number
   usedBytes: number
   uploadBytes: number
@@ -322,7 +324,8 @@ export interface FirewallActionResponse {
 export interface BBRResponse {
   enabled: boolean
   congestion: string
-  available: string[] | null
+  /** Space-separated list from `net.ipv4.tcp_available_congestion_control`, e.g. "reno cubic bbr". */
+  available: string
   qdisc: string
   running: string
   arch: string

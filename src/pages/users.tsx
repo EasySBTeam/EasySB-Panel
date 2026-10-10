@@ -121,8 +121,8 @@ export function UsersPage() {
         key: 'nodes',
         header: '节点',
         align: 'right',
-        sortValue: (user) => user.nodes.length,
-        cell: (user) => <span className="tabular">{user.nodes.length}</span>,
+        sortValue: (user) => user.nodes?.length ?? 0,
+        cell: (user) => <span className="tabular">{user.nodes?.length ?? 0}</span>,
       },
       {
         key: 'expireAt',

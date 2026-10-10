@@ -136,7 +136,7 @@ export function BBRPage() {
                   { label: '架构', value: data.arch || '—', mono: true },
                   {
                     label: '可用算法',
-                    value: (data.available ?? []).join(', ') || '—',
+                    value: data.available?.trim() || '—',
                   },
                   {
                     label: '已安装 BBR 内核',

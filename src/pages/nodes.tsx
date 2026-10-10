@@ -443,9 +443,9 @@ function NodeFormDialog({
             </div>
           </div>
 
-          {info && info.params.length > 0 ? (
+          {info && (info.params?.length ?? 0) > 0 ? (
             <div className="space-y-3 rounded-lg border bg-muted/30 p-3">
-              {info.params.map((param) => (
+              {info.params?.map((param) => (
                 <div key={param.key} className="space-y-1.5">
                   <Label htmlFor={`param-${param.key}`}>{param.label}</Label>
                   <Input
